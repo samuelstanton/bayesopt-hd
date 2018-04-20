@@ -27,7 +27,7 @@ def decaying_cos(x):
     val = Variable(torch.zeros(x.shape[0]))
     for i in range(n):
         val = val + -1/(x[:, i]+1)*torch.cos(2*math.pi*x[:, i])
-    return val
+    return 1/n * val
 
 
 def rosenbrock(scaled_x):
@@ -47,6 +47,7 @@ def rosenbrock(scaled_x):
 
 
 def hartmann6d(x):
+    #Global maximum 3.32237 @ (0.20169, 0.150011, 0.476874, 0.275332, 0.311652, 0.6573)
     n = x.shape[-1]
     if len(x.shape) == 1:
         x = x.view(1, n)
@@ -71,3 +72,16 @@ def hartmann6d(x):
         summand += alpha[i]*torch.exp(-temp)
     
     return summand
+
+def ackley(x):
+    #Global max of 0 at origin
+    n = x.shape[-1]
+    if len(x.shape) == 1:
+        x = x.view(1, n)
+        
+    a = 20; b = 0.2; c=2*math.pi;
+    
+    term_1 = -a * torch.exp(-b*torch.sqrt(1/n*torch.sum(x**2, dim=1)))
+    term_2 = -1*torch.exp(1/n*torch.sum(torch.cos(c*x), dim=1))
+    
+    return -1*(term_1 + term_2 + a + math.exp(1))
